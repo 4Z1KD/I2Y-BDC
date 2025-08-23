@@ -1,7 +1,7 @@
 # I2Y-BDC
 Icom to Yaesu - Band Data Converter
 
-this is a copy of MARIOS NICOLAOU's (5B4WN) from https://www.5b4wn.com/main/a1921.html<br/>
+this is a copy of MARIOS NICOLAOU's (5B4WN) work from https://www.5b4wn.com/main/a1921.html<br/>
 
 Icom rigs have their own unique way of providing  information to external rigs based on the current band. This information is provided on a single pin on the ACC-2 socket by varying the voltage from 0-8V<br/>
 <img width="581" height="205" alt="image" src="https://github.com/user-attachments/assets/5a2e77df-da36-452b-a9d8-203f05c8bdff" />
