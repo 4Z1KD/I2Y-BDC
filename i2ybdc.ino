@@ -1,24 +1,24 @@
+//Arduino Nano
 //icom band decoder
 //Marios Nicolaou 5B4WN (c) 2009 7 24
+//Gil Lianni 4Z1KD 2025 10 24
 //Use the code at your OWN risk
 //GPL licence
-//               .  = gnd
-//pins   +    o  =+
-//         o       o
-//        o         o
-int icomBandPin = 5;    // select the input pin for the potentiometer
+
+int icomBandPin = A5;    // select the input pin for the potentiometer
 int realVoltage = 8;  // variable to store the value coming from the sensor Volts
 int sensedVoltage=0;
-int D=9;
-int C=10;
-int B=11;
-int A=12;
+int A=9;
+int B=10;
+int C=11;
+int D=12;
 float calculatedVoltage=0;
 int band=0;
 int counter =0;
 int previousValue=0;
  void setup() {
    Serial.begin(9600);
+   pinMode(icomBandPin, INPUT);
    pinMode(A, OUTPUT);
    pinMode(B, OUTPUT);
    pinMode(C, OUTPUT);
@@ -26,15 +26,8 @@ int previousValue=0;
  }
  void loop() {
    // read the value from the sensor:
-   sensedVoltage = analogRead(icomBandPin);    
-   
-   
-   //get 5 consecutive values
-//  counter++;
-   
-   if (counter==5) {
-   
-   calculatedVoltage = float(sensedVoltage)*5/1024;
+   float sensedVoltage = analogRead(icomBandPin);   
+   float calculatedVoltage = float(sensedVoltage)*5/1024;
    
    Serial.print (sensedVoltage);
    Serial.print (" - ");
@@ -44,37 +37,27 @@ int previousValue=0;
    
    Serial.println(band, DEC);
    delay (20);
-                  
- } else {
-   if (abs(previousValue-sensedVoltage)>10) {
-    //means change or spurious number
-     previousValue=sensedVoltage;
-   } else {
-     counter++;
-     previousValue=sensedVoltage;
-   }
-   
-   
- }
- 
 }
  
 int  getBand(float voltage) {
    int band=0;
- 
- /*      A   B  C   D
- 160     0   0  0   1
-80       0   0  1   0
-40       0   0  1   1
-20       0   1  0   1
-15       0   1  1   1
-10       1   0  0   1
 
- */
+/* Logic Letter (Amplifier Pin#)
+/*       A(2)   B(1)    C(9)   D(8)
+160      0       0       0      1
+80       0       0       1      0
+40       0       0       1      1
+30       0       1       0      0
+20       0       1       0      1
+17       0       1       1      1
+15       0       1       1      1
+12       1       0       0      1
+10       1       0       0      1
+6        1       0       1      0
+*/
  
- 
- 
-if (voltage>4.20 && voltage<4.68) {
+
+if (voltage>4.20 && voltage<4.9) {
  band=160;
  digitalWrite(A, LOW);
  digitalWrite(B, LOW);
@@ -107,19 +90,19 @@ if (voltage>4.20 && voltage<4.68) {
  digitalWrite(C, HIGH);
  digitalWrite(D, HIGH);
  
-} else if (voltage>=1.2 && voltage<1.7) {
+} else if (voltage>=1.3 && voltage<1.7) {
   band=10;
  digitalWrite(A, HIGH);
  digitalWrite(B, LOW);
  digitalWrite(C, LOW);
  digitalWrite(D, HIGH);
  
-} else if (voltage>=0.75 && voltage<1.2) {
+} else if (voltage>=0.75 && voltage<1.3) {
   band=6;
-   digitalWrite(A, LOW);
- digitalWrite(B, HIGH);
- digitalWrite(C, LOW);
- digitalWrite(D, HIGH);
+ digitalWrite(A, HIGH);
+ digitalWrite(B, LOW);
+ digitalWrite(C, HIGH);
+ digitalWrite(D, LOW);
 } else if (voltage  <0.75) {
   band=30;
    digitalWrite(A, LOW);
@@ -127,6 +110,7 @@ if (voltage>4.20 && voltage<4.68) {
  digitalWrite(C, LOW);
  digitalWrite(D, LOW);
 }
+
  return band;
  
 }
